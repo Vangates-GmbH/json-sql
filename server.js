@@ -1,13 +1,27 @@
 const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000;
+const bodyParser = require('body-parser');
 
-app.use(express.json());
+const app = express();
+
+// Increase payload size limit
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+app.post('/transform', (req, res) => {
+    try {
+        const input = req.body;
+        const sqlQuery = transformJsonToSql(input);
+        res.send(sqlQuery);
+    } catch (error) {
+        res.status(500).send(`Error: ${error.message}`);
+    }
+});
 
 function transformJsonToSql(input) {
     try {
-        let additionalData = input[0];
-        let mainData = input[1];
+        let parsedInput = input.json;
+        let additionalData = parsedInput[0];
+        let mainData = parsedInput[1];
 
         let sqlValues = mainData.map(item => {
             let ICP_TM = additionalData.ICP_TM ? `'${additionalData.ICP_TM.replace(/'/g, "\\'")}'` : 'NULL';
@@ -36,12 +50,7 @@ function transformJsonToSql(input) {
     }
 }
 
-app.post('/transform', (req, res) => {
-    const input = req.body.json;
-    const sqlQuery = transformJsonToSql(input);
-    res.send({ query: sqlQuery });
-});
-
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
