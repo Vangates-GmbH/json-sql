@@ -9,10 +9,8 @@ exports.handler = async (event) => {
         const sqlQuery = transformJsonToSql(input.json ? input : {json: input });
 
         // Return the SQL query as the response
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ sqlQuery }),
-        };
+        return sqlQuery;
+
     } catch (error) {
         return {
             statusCode: 500,
@@ -21,11 +19,17 @@ exports.handler = async (event) => {
     }
 };
 
-function transformJsonToSql(input) {
+async function transformJsonToSql(input) {
     try {
         let parsedInput = input.json;
         let additionalData = parsedInput[0];
-        let mainData = parsedInput[1];
+        let mainData = [];
+
+        if(additionalData.dataURL) {
+            mainData = await fetch (additionalData.dataURL);
+        } else {
+            mainData = parsedInput[1];
+        }
 
         let sqlValues = mainData.map(item => {
             let ICP_TM = additionalData.ICP_TM ? `'${additionalData.ICP_TM.replace(/'/g, "\\'")}'` : 'NULL';
