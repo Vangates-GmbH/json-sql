@@ -6,12 +6,15 @@ exports.handler = async (event) => {
         const input = event;
 
         // Transform the input JSON to SQL
-        const sqlQuery = transformJsonToSql(input.json ? input : {json: input });
+        const sqlQuery = await transformJsonToSql(input.json ? input : {json: input });
 
-        // Return the SQL query as the response
-        return sqlQuery;
-
+        // Return the SQL query as plain text
+        return {
+            statusCode: 200,
+            body: sqlQuery.toString(),
+        };
     } catch (error) {
+        console.error(error);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: `Error: ${error.message}` }),
@@ -26,7 +29,8 @@ async function transformJsonToSql(input) {
         let mainData = [];
 
         if(additionalData.dataURL) {
-            mainData = await fetch (additionalData.dataURL);
+            const response = await fetch(additionalData.dataURL);
+            mainData = await response.json();
         } else {
             mainData = parsedInput[1];
         }
