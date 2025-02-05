@@ -45,7 +45,7 @@ async function transformJsonToSql(input) {
             let firstName = item.firstName ? `'${item.firstName.replace(/'/g, "\\'")}'` : 'NULL';
             let sizeRange = item.companyId ? `'${item.companyId.replace(/'/g, "\\'")}'` : 'NULL';
             let companyName = item.companyId ? `'${item.companyId.replace(/'/g, "\\'")}'` : 'NULL';
-            let linkedinUrl = item.profileUrl ? `'${item.profileUrl.replace(/'/g, "\\'")}'` : 'NULL';
+            let linkedinUrl = item.linkedInProfileUrl ? `'${item.linkedInProfileUrl.replace(/'/g, "\\'")}'` : 'NULL';
             let companyState = item.companyLocation ? `'${item.companyLocation.replace(/'/g, "\\'")}'` : 'NULL';
             let customerName = additionalData.customer_name ? `'${additionalData.customer_name.replace(/'/g, "\\'")}'` : 'NULL';
             let companyLocation = item.companyLocation ? `'${item.companyLocation.replace(/'/g, "\\'")}'` : 'NULL';
