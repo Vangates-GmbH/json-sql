@@ -31,7 +31,7 @@ async function transformJsonToSql(input) {
         const response = await fetch(additionalData.dataURL);
         mainData = await response.json();
     } else {
-        mainData = parsedInput[1];
+        mainData = parsedInput;
     }
 
     let sqlValues = mainData.map(item => {
